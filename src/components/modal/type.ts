@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 export type TModalProps = {
-  title: string;
+  title?: string;  // Добавляем "?" чтобы сделать пропс необязательным
   onClose: () => void;
   children?: ReactNode;
 };
