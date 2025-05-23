@@ -6,7 +6,7 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from '../modal/modal';
 import { IngredientDetails } from '../ingredient-details/ingredient-details';
 import { OrderInfo } from '../order-info/order-info';
-import { ProtectedRoute } from '../protected-route/protected-route';
+import { ProtectedRoute } from '../protected-route';
 import { useEffect } from 'react';
 
 const App = () => {
