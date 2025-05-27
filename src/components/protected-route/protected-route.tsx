@@ -1,27 +1,26 @@
-import { FC, ReactNode } from 'react';
-import { useSelector } from '../../services/store';
+import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
+import { getIsAuthCheckedSelector } from '../../services/slices/userSlice';
 
 type TProtectedRouteProps = {
   onlyUnAuth?: boolean;
-  children: ReactNode;
+  children: React.ReactElement;
 };
 
-export const ProtectedRoute: FC<TProtectedRouteProps> = ({ onlyUnAuth = false, children }) => {
-  const { user, isAuthChecked } = useSelector(state => state.auth);
+export const ProtectedRoute = ({
+  onlyUnAuth = false,
+  children
+}: TProtectedRouteProps) => {
   const location = useLocation();
+  const isAuthChecked = useSelector(getIsAuthCheckedSelector);
 
-  if (!isAuthChecked) {
-    return null;
+  if (!isAuthChecked && !onlyUnAuth) {
+    return <Navigate replace to='/login' state={{ from: location }} />;
   }
 
-  if (onlyUnAuth && user) {
-    const from = location.state?.from || '/';
-    return <Navigate to={from} replace />;
-  }
-
-  if (!onlyUnAuth && !user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (isAuthChecked && onlyUnAuth) {
+    const from = location.state?.from || { pathname: '/' };
+    return <Navigate replace to={from} />;
   }
 
   return children;

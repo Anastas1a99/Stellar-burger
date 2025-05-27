@@ -1,60 +1,70 @@
 import { TOrder } from '@utils-types';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { orderBurgerApi } from '@api';
+import { getOrdersApi, getOrderByNumberApi } from '@api';
 import { RootState } from '../store';
 
 export type TOrderState = {
-  orders: TOrder | null;
-  orderRequest: boolean;
-  orderModal: null | TOrder;
+  orders: TOrder[];
+  currentOrder: TOrder | null;
   error: string | null;
   loading: boolean;
 };
 
 export const initialState: TOrderState = {
-  orders: null,
-  orderRequest: false,
-  orderModal: null,
+  orders: [],
+  currentOrder: null,
   error: null,
   loading: false
 };
 
-export const createOrder = createAsyncThunk(
-  'order/createOrder',
-  orderBurgerApi
+export const getOrderByNumber = createAsyncThunk(
+  'orders/getOrderByNumber',
+  async (number: number) => {
+    const response = await getOrderByNumberApi(number);
+    return response;
+  }
+);
+
+export const getOrder = createAsyncThunk('order/getOrders', async () =>
+  getOrdersApi()
 );
 
 export const orderSlice = createSlice({
   name: 'order',
   initialState,
-  reducers: {
-    clearOrder: (state) => (state = initialState)
-  },
-  selectors: {
-    getOrderRequest: (state) => state.orderRequest,
-    getOrderModal: (state) => state.orderModal
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(createOrder.pending, (state) => {
-        state.loading = false;
+      .addCase(getOrder.pending, (state) => {
         state.error = null;
-        state.orderRequest = true;
+        state.loading = true;
       })
-      .addCase(createOrder.rejected, (state, action) => {
-        state.loading = false;
+      .addCase(getOrder.rejected, (state, action) => {
         state.error = action.error.message as string;
-      })
-      .addCase(createOrder.fulfilled, (state, action) => {
         state.loading = false;
+      })
+      .addCase(getOrder.fulfilled, (state, action) => {
+        state.orders = action.payload;
+        state.loading = false;
+      });
+
+    builder
+      .addCase(getOrderByNumber.pending, (state) => {
+        state.currentOrder = null;
+        state.loading = true;
         state.error = null;
-        state.orderRequest = false;
-        state.orders = action.payload.order;
+      })
+      .addCase(getOrderByNumber.rejected, (state, action) => {
+        state.error = action.error.message as string;
+        state.loading = false;
+      })
+      .addCase(getOrderByNumber.fulfilled, (state, action) => {
+        state.currentOrder = action.payload.orders[0];
+        state.loading = false;
       });
   }
 });
 
-export const getOrderState = (state: RootState) => state.order;
-export const { getOrderRequest, getOrderModal } = orderSlice.selectors;
-export const { clearOrder } = orderSlice.actions;
+export const getCurrentOrder = (state: RootState) => state.order.currentOrder;
+export const getLoadingSelector = (state: RootState) => state.order.loading;
 export const orderReducer = orderSlice.reducer;
