@@ -22,6 +22,13 @@ const config: Config = {
   '^@utils-types$': '<rootDir>/src/utils/types.ts',
   '^@components/(.*)$': '<rootDir>/src/components/$1',
   },
+  collectCoverage: true,
+  coverageDirectory: "coverage",
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!**/node_modules/**",
+    "!**/vendor/**"
+  ]
 };
 
 export default config;
