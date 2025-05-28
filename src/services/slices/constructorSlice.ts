@@ -1,15 +1,15 @@
-import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
+import { TConstructorIngredient, TIngredient, TOrder } from '../../utils/types';
 import {
   createSlice,
   PayloadAction,
   nanoid,
   createAsyncThunk
 } from '@reduxjs/toolkit';
-import { orderBurgerApi } from '@api';
+import { orderBurgerApi } from '../../utils/burger-api';
 import { RootState } from '../store';
 
 export type TConstructorState = {
-  bun: TIngredient | null;
+  bun: TConstructorIngredient | null;
   ingredients: TConstructorIngredient[];
   orderModalData: TOrder | null;
   error: string | null;
@@ -82,6 +82,7 @@ export const constructorSlice = createSlice({
       .addCase(createOrder.fulfilled, (state, action) => {
         state.orderModalData = action.payload;
         state.loading = false;
+        state.error = null;
       });
   }
 });

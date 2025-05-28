@@ -1,6 +1,6 @@
-import { TOrder } from '@utils-types';
+import { TOrder } from '../../utils/types';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getOrdersApi, getOrderByNumberApi } from '@api';
+import { getOrdersApi, getOrderByNumberApi } from '../../utils/burger-api';
 import { RootState } from '../store';
 
 export type TOrderState = {
@@ -46,6 +46,7 @@ export const orderSlice = createSlice({
       .addCase(getOrder.fulfilled, (state, action) => {
         state.orders = action.payload;
         state.loading = false;
+        state.error = null;
       });
 
     builder
@@ -61,6 +62,7 @@ export const orderSlice = createSlice({
       .addCase(getOrderByNumber.fulfilled, (state, action) => {
         state.currentOrder = action.payload.orders[0];
         state.loading = false;
+        state.error = null;
       });
   }
 });

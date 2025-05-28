@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { TOrdersData } from '@utils-types';
-import { getFeedsApi } from '@api';
+import { TOrdersData } from '../../utils/types'
+import { getFeedsApi } from '../../utils/burger-api';
 import { RootState } from '../store';
 
 export type TFeedState = {
@@ -41,6 +41,7 @@ export const feedSlice = createSlice({
       .addCase(getFeedApi.fulfilled, (state, action) => {
         state.loading = false;
         state.feed = action.payload;
+        state.error = null;
       });
   }
 });
